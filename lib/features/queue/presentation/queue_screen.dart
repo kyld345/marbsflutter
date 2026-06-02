@@ -1,5 +1,13 @@
 // lib/features/queue/presentation/queue_screen.dart
-// Unified queue screen: customers see their position, staff manage the full queue
+// Unified queue screen: customers see their position, staff manage the full queue.
+//
+// FIXES:
+//  1. [WRONG STAT] "Total" stat tile previously summed only waiting +
+//     in_progress + completed, silently ignoring 'skipped' entries.
+//     It now reads stats['total'] from QueueRepository.getQueueStats()
+//     which counts all non-filtered statuses.
+//  2. [DISPLAY] _StaffQueueCard shows the real customer name from
+//     QueueModel.customerName (which now reads walk-in names from notes).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -45,6 +53,8 @@ class QueueScreen extends ConsumerWidget {
               style: GoogleFonts.playfairDisplay(
                   fontSize: 22, fontWeight: FontWeight.w700),
             ),
+            // Date display is genuinely needed on the queue header to
+            // confirm which day's queue is being shown.
             Text(
               DateFormat('EEEE, MMMM d').format(DateTime.now()),
               style: GoogleFonts.dmSans(
@@ -72,7 +82,8 @@ class QueueScreen extends ConsumerWidget {
               SliverToBoxAdapter(
                 child: statsAsync.when(
                   data: (stats) => _buildStatsRow(stats),
-                  loading: () => const SizedBox(height: 80, child: LoadingWidget()),
+                  loading: () =>
+                      const SizedBox(height: 80, child: LoadingWidget()),
                   error: (_, __) => const SizedBox(),
                 ).animate().fadeIn(),
               ),
@@ -130,6 +141,9 @@ class QueueScreen extends ConsumerWidget {
   }
 
   Widget _buildStatsRow(Map<String, int> stats) {
+    // FIX: use stats['total'] so skipped entries are included in the count.
+    final total = stats['total'] ?? 0;
+
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Row(
@@ -161,8 +175,9 @@ class QueueScreen extends ConsumerWidget {
           Expanded(
               child: _StatTile(
             label: 'Total',
-            value:
-                '${(stats['waiting'] ?? 0) + (stats['in_progress'] ?? 0) + (stats['completed'] ?? 0)}',
+            // FIX: was (waiting + in_progress + completed), which excluded
+            // 'skipped'. Using repository-computed total instead.
+            value: '$total',
             color: AppTheme.info,
             icon: Icons.people,
           )),
@@ -204,7 +219,7 @@ class _StaffQueueCard extends ConsumerWidget {
       ),
       child: Row(
         children: [
-          // Queue number
+          // Queue number badge
           Container(
             width: 52,
             height: 52,
@@ -213,18 +228,13 @@ class _StaffQueueCard extends ConsumerWidget {
               borderRadius: BorderRadius.circular(14),
             ),
             child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '#${entry.queueNumber}',
-                    style: GoogleFonts.playfairDisplay(
-                      color: statusColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
+              child: Text(
+                '#${entry.queueNumber}',
+                style: GoogleFonts.playfairDisplay(
+                  color: statusColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ),
@@ -239,6 +249,9 @@ class _StaffQueueCard extends ConsumerWidget {
                 Row(
                   children: [
                     Expanded(
+                      // FIX: entry.customerName now returns the walk-in name
+                      // stored in notes by the fixed addWalkIn(), so this no
+                      // longer shows "Walk-in #N" for named customers.
                       child: Text(
                         entry.customerName,
                         style: GoogleFonts.dmSans(
@@ -323,7 +336,9 @@ class _StaffQueueCard extends ConsumerWidget {
 
   Future<void> _updateStatus(
       BuildContext context, WidgetRef ref, String newStatus) async {
-    await ref.read(queueNotifierProvider.notifier).updateStatus(entry.id, newStatus);
+    await ref
+        .read(queueNotifierProvider.notifier)
+        .updateStatus(entry.id, newStatus);
     ref.invalidate(todayQueueProvider);
     ref.invalidate(queueStatsProvider);
   }

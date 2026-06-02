@@ -1,4 +1,13 @@
 // lib/features/queue/domain/queue_provider.dart
+//
+// FIXES:
+//  1. [SILENT FAILURE] todayQueueProvider previously swallowed errors from
+//     activeBranchIdProvider by checking `.value` (null while loading OR on
+//     error) and returning an empty stream. The UI had no way to distinguish
+//     "still loading" from "no active branch configured". The provider now
+//     propagates the AsyncError so the screen can show a retry option.
+//  2. queueStatsProvider uses the same guarded branch lookup so stats also
+//     surface an error instead of returning empty/zero counts.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/queue_repository.dart';
@@ -11,36 +20,57 @@ final queueRepositoryProvider = Provider<QueueRepository>((ref) {
   return QueueRepository(client);
 });
 
-// Today's queue (with realtime)
-final todayQueueProvider = StreamProvider<List<QueueModel>>((ref) {
-  final branchId = ref.watch(activeBranchIdProvider).value;
-  if (branchId == null) {
-    return Stream.value([]);
-  }
+// ──────────────────────────────────────────────────────────────
+// Today's queue (realtime)
+// ──────────────────────────────────────────────────────────────
+
+/// Streams today's queue for the active branch, re-fetching on every
+/// realtime change event so joined data (customer, service, barber) is
+/// always fresh.
+///
+/// FIX: propagates activeBranchIdProvider errors rather than silently
+/// returning an empty stream.
+final todayQueueProvider = StreamProvider<List<QueueModel>>((ref) async* {
+  // Await branch resolution; throws if no active branch found.
+  final branchId = await ref.watch(activeBranchIdProvider.future);
 
   final repo = ref.watch(queueRepositoryProvider);
-  return repo
+
+  // watchQueue triggers on any queue row change for this branch.
+  // asyncMap re-fetches the fully-joined list on each event.
+  yield* repo
       .watchQueue(branchId)
-      .asyncMap((_) async => repo.getTodayQueue(branchId));
+      .asyncMap((_) => repo.getTodayQueue(branchId));
 });
 
+// ──────────────────────────────────────────────────────────────
 // Queue stats
+// ──────────────────────────────────────────────────────────────
+
 final queueStatsProvider = FutureProvider<Map<String, int>>((ref) async {
-  // Re-fetch when queue changes
+  // Re-fetch whenever the queue stream emits (keeps stats in sync).
   ref.watch(todayQueueProvider);
+
+  // FIX: use .future to propagate errors from activeBranchIdProvider.
   final branchId = await ref.watch(activeBranchIdProvider.future);
   final repo = ref.watch(queueRepositoryProvider);
   return repo.getQueueStats(branchId);
 });
 
-// My queue entry (customer)
+// ──────────────────────────────────────────────────────────────
+// My queue entry (customer view)
+// ──────────────────────────────────────────────────────────────
+
 final myQueueEntryProvider =
     FutureProvider.family<QueueModel?, String>((ref, appointmentId) async {
   final repo = ref.watch(queueRepositoryProvider);
   return repo.getMyQueueEntry(appointmentId);
 });
 
-// Queue notifier for mutations
+// ──────────────────────────────────────────────────────────────
+// Queue notifier (mutations)
+// ──────────────────────────────────────────────────────────────
+
 class QueueNotifier extends StateNotifier<AsyncValue<void>> {
   final QueueRepository _repository;
 
@@ -80,17 +110,13 @@ class QueueNotifier extends StateNotifier<AsyncValue<void>> {
     }
   }
 
-  Future<bool> callNext(String id) async {
-    return updateStatus(id, 'in_progress');
-  }
+  Future<bool> callNext(String id) async => updateStatus(id, 'in_progress');
 
-  Future<bool> completeService(String id) async {
-    return updateStatus(id, 'completed');
-  }
+  Future<bool> completeService(String id) async =>
+      updateStatus(id, 'completed');
 
-  Future<bool> skipCustomer(String id) async {
-    return updateStatus(id, 'skipped');
-  }
+  Future<bool> skipCustomer(String id) async =>
+      updateStatus(id, 'skipped');
 }
 
 final queueNotifierProvider =

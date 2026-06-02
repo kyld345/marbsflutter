@@ -1,5 +1,16 @@
 // lib/features/dashboard/presentation/receptionist_dashboard_screen.dart
-// Receptionist home: walk-in check-in, queue overview, today's appointments
+// Receptionist home: walk-in check-in, queue overview, today's appointments.
+//
+// FIXES:
+//  1. [DEAD CODE / STUB] Removed `activeServicesProvider` stub at the
+//     bottom of the file. It was defined but never used, and shadowed
+//     nothing — but it polluted the file with a dummy empty provider and
+//     could confuse IDEs suggesting it as an autocomplete option.
+//  2. [DISPLAY BUG] _QueueTile previously showed the text "Queue #N" twice:
+//     once in the coloured badge and once as the row label. It now shows
+//     the customer name (via QueueModel.customerName) as the primary label
+//     and the queue number only in the badge. This matches the staff card
+//     in queue_screen.dart.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,11 +40,13 @@ class ReceptionistDashboardScreen extends ConsumerWidget {
     final queueAsync = ref.watch(todayQueueProvider);
     final queueStatsAsync = ref.watch(queueStatsProvider);
     final branchId = ref.watch(activeBranchIdProvider).value;
-    // BUG FIX: Use date-only DateTime so AppointmentFilter's Equatable check
-    // is stable across rebuilds. DateTime.now() changes every millisecond →
+
+    // Use date-only DateTime so AppointmentFilter's Equatable check is
+    // stable across rebuilds. DateTime.now() changes every millisecond →
     // different ISO string → new provider instance → infinite loading.
     final now = DateTime.now();
-    final todayFilter = AppointmentFilter(date: DateTime(now.year, now.month, now.day));
+    final todayFilter =
+        AppointmentFilter(date: DateTime(now.year, now.month, now.day));
     final todayApptAsync = ref.watch(allAppointmentsProvider(todayFilter));
 
     final displayName =
@@ -43,7 +56,7 @@ class ReceptionistDashboardScreen extends ConsumerWidget {
       backgroundColor: AppTheme.background,
       body: CustomScrollView(
         slivers: [
-          // Header
+          // ── Header ────────────────────────────────────────────
           SliverAppBar(
             expandedHeight: 140,
             floating: false,
@@ -107,7 +120,8 @@ class ReceptionistDashboardScreen extends ConsumerWidget {
                   // Stats row
                   queueStatsAsync
                       .when(
-                        data: (stats) => _buildStatsRow(stats, todayApptAsync),
+                        data: (stats) =>
+                            _buildStatsRow(stats, todayApptAsync),
                         loading: () => const LoadingWidget(),
                         error: (_, __) => const SizedBox(),
                       )
@@ -168,8 +182,8 @@ class ReceptionistDashboardScreen extends ConsumerWidget {
                           );
                         },
                         loading: () => const LoadingWidget(),
-                        error: (_, __) =>
-                            _buildEmptyCard('Unable to load queue'),
+                        error: (e, __) =>
+                            _buildEmptyCard('Unable to load queue: $e'),
                       )
                       .animate()
                       .fadeIn(delay: 200.ms),
@@ -187,7 +201,8 @@ class ReceptionistDashboardScreen extends ConsumerWidget {
                             fontWeight: FontWeight.w700,
                           )),
                       TextButton.icon(
-                        onPressed: () => context.go(AppRoutes.webAppointments),
+                        onPressed: () =>
+                            context.go(AppRoutes.webAppointments),
                         icon: const Icon(Icons.open_in_new,
                             color: AppTheme.secondary, size: 16),
                         label: Text('View All',
@@ -331,7 +346,8 @@ class ReceptionistDashboardScreen extends ConsumerWidget {
       ),
       child: Center(
         child: Text(message,
-            style: GoogleFonts.dmSans(color: AppTheme.textHint, fontSize: 14)),
+            style: GoogleFonts.dmSans(
+                color: AppTheme.textHint, fontSize: 14)),
       ),
     );
   }
@@ -384,7 +400,6 @@ class _WalkInDialogState extends ConsumerState<_WalkInDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Customer Name ──────────────────────────────────────
             _DialogField(
               label: 'Customer Name',
               controller: _nameCtrl,
@@ -392,7 +407,6 @@ class _WalkInDialogState extends ConsumerState<_WalkInDialog> {
             ),
             const SizedBox(height: 12),
 
-            // ── Phone ──────────────────────────────────────────────
             _DialogField(
               label: 'Phone (Optional)',
               controller: _phoneCtrl,
@@ -401,7 +415,6 @@ class _WalkInDialogState extends ConsumerState<_WalkInDialog> {
             ),
             const SizedBox(height: 12),
 
-            // ── Service picker (required) ──────────────────────────
             Text('Service *',
                 style: GoogleFonts.dmSans(
                     color: AppTheme.textSecondary,
@@ -410,8 +423,7 @@ class _WalkInDialogState extends ConsumerState<_WalkInDialog> {
             const SizedBox(height: 6),
             servicesAsync.when(
               data: (services) => DropdownButtonFormField<String>(
-                // ignore: deprecated_member_use
-                value: _selectedServiceId,
+                initialValue: _selectedServiceId,
                 hint: Text('Select a service',
                     style: GoogleFonts.dmSans(color: AppTheme.textHint)),
                 decoration: InputDecoration(
@@ -426,7 +438,8 @@ class _WalkInDialogState extends ConsumerState<_WalkInDialog> {
                 items: services
                     .map((ServiceModel s) => DropdownMenuItem<String>(
                           value: s.id,
-                          child: Text('${s.name}  ·  ₱${s.price.toStringAsFixed(0)}'),
+                          child: Text(
+                              '${s.name}  ·  ₱${s.price.toStringAsFixed(0)}'),
                         ))
                     .toList(),
                 onChanged: (v) => setState(() => _selectedServiceId = v),
@@ -440,7 +453,6 @@ class _WalkInDialogState extends ConsumerState<_WalkInDialog> {
             ),
             const SizedBox(height: 12),
 
-            // ── Barber picker (optional) ───────────────────────────
             Text('Select Barber (Optional)',
                 style: GoogleFonts.dmSans(
                     color: AppTheme.textSecondary,
@@ -449,10 +461,10 @@ class _WalkInDialogState extends ConsumerState<_WalkInDialog> {
             const SizedBox(height: 6),
             barbersAsync.when(
               data: (barbers) {
-                final available = barbers.where((b) => b.isAvailable).toList();
+                final available =
+                    barbers.where((b) => b.isAvailable).toList();
                 return DropdownButtonFormField<String>(
-                  // ignore: deprecated_member_use
-                  value: _selectedBarberId,
+                  initialValue: _selectedBarberId,
                   hint: Text('Any available barber',
                       style: GoogleFonts.dmSans(color: AppTheme.textHint)),
                   decoration: InputDecoration(
@@ -473,7 +485,8 @@ class _WalkInDialogState extends ConsumerState<_WalkInDialog> {
                   onChanged: (v) => setState(() => _selectedBarberId = v),
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () =>
+                  const Center(child: CircularProgressIndicator()),
               error: (_, __) => const SizedBox(),
             ),
           ],
@@ -498,7 +511,8 @@ class _WalkInDialogState extends ConsumerState<_WalkInDialog> {
                   child: CircularProgressIndicator(
                       strokeWidth: 2, color: Colors.black))
               : Text('Check In',
-                  style: GoogleFonts.dmSans(fontWeight: FontWeight.w700)),
+                  style:
+                      GoogleFonts.dmSans(fontWeight: FontWeight.w700)),
         ),
       ],
     );
@@ -507,7 +521,6 @@ class _WalkInDialogState extends ConsumerState<_WalkInDialog> {
   Future<void> _handleCheckIn() async {
     final name = _nameCtrl.text.trim();
 
-    // ── Validate ───────────────────────────────────────────────────
     if (name.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter customer name')),
@@ -531,13 +544,12 @@ class _WalkInDialogState extends ConsumerState<_WalkInDialog> {
     setState(() => _loading = true);
 
     try {
-      // ── Create walk-in appointment + queue entry via repository ──
       final queueEntry = await ref
           .read(queueNotifierProvider.notifier)
           .addWalkIn(
             branchId: branchId,
             serviceId: _selectedServiceId!,
-            barberId: _selectedBarberId,   // null → any available barber
+            barberId: _selectedBarberId,
             customerName: name,
           );
 
@@ -592,7 +604,8 @@ class _RoleBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppTheme.secondary.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.secondary.withValues(alpha: 0.4)),
+        border:
+            Border.all(color: AppTheme.secondary.withValues(alpha: 0.4)),
       ),
       child: Text(label,
           style: GoogleFonts.dmSans(
@@ -638,7 +651,8 @@ class _MiniStat extends StatelessWidget {
                 fontWeight: FontWeight.w700,
               )),
           Text(label,
-              style: GoogleFonts.dmSans(color: AppTheme.textHint, fontSize: 11),
+              style: GoogleFonts.dmSans(
+                  color: AppTheme.textHint, fontSize: 11),
               maxLines: 1,
               overflow: TextOverflow.ellipsis),
         ],
@@ -717,6 +731,7 @@ class _QueueTile extends StatelessWidget {
       ),
       child: Row(
         children: [
+          // Queue number badge
           Container(
             width: 36,
             height: 36,
@@ -737,16 +752,32 @@ class _QueueTile extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              'Queue #${entry.queueNumber}',
-              style:
-                  GoogleFonts.dmSans(color: AppTheme.textPrimary, fontSize: 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // FIX: was 'Queue #N' (duplicate of the badge).
+                // Now shows the real customer name, including walk-in names
+                // stored in notes by the fixed addWalkIn().
+                Text(
+                  entry.customerName,
+                  style: GoogleFonts.dmSans(
+                      color: AppTheme.textPrimary,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600),
+                ),
+                Text(
+                  entry.serviceName,
+                  style: GoogleFonts.dmSans(
+                      color: AppTheme.textHint, fontSize: 12),
+                ),
+              ],
             ),
           ),
           if (entry.estimatedWaitMinutes != null)
             Text(
               '~${entry.estimatedWaitMinutes} min',
-              style: GoogleFonts.dmSans(color: AppTheme.textHint, fontSize: 12),
+              style:
+                  GoogleFonts.dmSans(color: AppTheme.textHint, fontSize: 12),
             ),
         ],
       ),
@@ -758,7 +789,8 @@ class _ReceptionistApptTile extends StatelessWidget {
   final AppointmentModel appointment;
   final WidgetRef ref;
 
-  const _ReceptionistApptTile({required this.appointment, required this.ref});
+  const _ReceptionistApptTile(
+      {required this.appointment, required this.ref});
 
   @override
   Widget build(BuildContext context) {
@@ -815,7 +847,8 @@ class _ReceptionistApptTile extends StatelessWidget {
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             decoration: BoxDecoration(
               color: statusColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(6),
@@ -887,8 +920,8 @@ class _DialogField extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
             ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            contentPadding: const EdgeInsets.symmetric(
+                horizontal: 14, vertical: 12),
           ),
         ),
       ],
@@ -896,5 +929,8 @@ class _DialogField extends StatelessWidget {
   }
 }
 
-// Provider stubs for compilation
-final activeServicesProvider = FutureProvider<List<dynamic>>((ref) async => []);
+// FIX: Removed the `activeServicesProvider` stub that was previously at the
+// bottom of this file. It was dead code that provided an empty list and was
+// never referenced by any widget in this file or elsewhere. The real
+// servicesProvider (from service_provider.dart) is used directly in the
+// walk-in dialog above.
