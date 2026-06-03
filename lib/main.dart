@@ -47,7 +47,7 @@ class MarbinBarbershopApp extends ConsumerWidget {
     final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
-      title: 'Marbin Barbershop',
+      title: 'kyl',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
       routerConfig: router,

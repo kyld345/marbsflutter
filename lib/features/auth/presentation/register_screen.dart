@@ -165,7 +165,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           ),
           const SizedBox(height: 32),
           Text(
-            'Join Marbin\nBarbershop',
+            'Kyl Barbershop',
             style: GoogleFonts.playfairDisplay(
               color: AppTheme.textPrimary,
               fontSize: 44,

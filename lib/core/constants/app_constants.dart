@@ -2,7 +2,7 @@
 
 class AppConstants {
   // App Info
-  static const String appName = 'Marbin Barbershop';
+  static const String appName = 'kyl';
   static const String appVersion = '1.0.0';
   static const String appTagline = 'Your Style, Our Craft';
 
@@ -40,8 +40,13 @@ class AppConstants {
 
   // Days of Week
   static const List<String> daysOfWeek = [
-    'Sunday', 'Monday', 'Tuesday', 'Wednesday',
-    'Thursday', 'Friday', 'Saturday'
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday'
   ];
 
   // Pagination
@@ -57,7 +62,7 @@ class AppStrings {
   static const String loginTitle = 'Welcome Back';
   static const String loginSubtitle = 'Sign in to your account';
   static const String registerTitle = 'Create Account';
-  static const String registerSubtitle = 'Join Marbin Barbershop';
+  static const String registerSubtitle = 'kyl Barbershop welcomes you';
   static const String forgotPassword = 'Forgot Password?';
   static const String noAccount = "Don't have an account? ";
   static const String hasAccount = 'Already have an account? ';

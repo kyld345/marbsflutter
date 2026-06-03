@@ -79,8 +79,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     // Watch role loading state to show spinner while router decides where to go
     final roleState = ref.watch(userRoleAsyncProvider);
     final authState = ref.watch(authStateProvider);
-    final isNavigating =
-        authState.value != null && roleState.isLoading;
+    final isNavigating = authState.value != null && roleState.isLoading;
 
     final size = MediaQuery.of(context).size;
     final isWide = size.width > 800;
@@ -97,8 +96,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const CircularProgressIndicator(
-                        color: AppTheme.secondary),
+                    const CircularProgressIndicator(color: AppTheme.secondary),
                     const SizedBox(height: 16),
                     Text(
                       'Loading your workspace...',
@@ -175,17 +173,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       color: AppTheme.secondary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                          color: AppTheme.secondary.withValues(alpha: 0.4), width: 2),
+                          color: AppTheme.secondary.withValues(alpha: 0.4),
+                          width: 2),
                     ),
                     child: const Icon(Icons.content_cut,
                         color: AppTheme.secondary, size: 36),
-                  )
-                      .animate()
-                      .fadeIn(duration: 600.ms)
-                      .slideY(begin: -0.2),
+                  ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2),
                   const SizedBox(height: 32),
                   Text(
-                    'Marbin\nBarbershop',
+                    'Kyl Barbershop',
                     style: GoogleFonts.playfairDisplay(
                       color: Colors.white,
                       fontSize: 48,
@@ -209,7 +205,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ...[
                     const _BrandFeature(
                         Icons.calendar_today, 'Online Appointment Booking'),
-                    const _BrandFeature(Icons.queue, 'Real-Time Queue Tracking'),
+                    const _BrandFeature(
+                        Icons.queue, 'Real-Time Queue Tracking'),
                     const _BrandFeature(
                         Icons.star, 'Top-Rated Barbers & Services'),
                   ].asMap().entries.map(
@@ -217,7 +214,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           padding: const EdgeInsets.only(bottom: 16),
                           child: e.value
                               .animate()
-                              .fadeIn(delay: Duration(milliseconds: 500 + e.key * 150))
+                              .fadeIn(
+                                  delay:
+                                      Duration(milliseconds: 500 + e.key * 150))
                               .slideX(begin: -0.1),
                         ),
                       ),
@@ -246,7 +245,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ).animate().fadeIn().scale(begin: const Offset(0.8, 0.8)),
         const SizedBox(height: 16),
         Text(
-          'Marbin Barbershop',
+          'Kyl Barbershop',
           style: GoogleFonts.playfairDisplay(
             color: AppTheme.textPrimary,
             fontSize: 28,
@@ -356,7 +355,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.secondary,
                 foregroundColor: Colors.black,
-                disabledBackgroundColor: AppTheme.secondary.withValues(alpha: 0.4),
+                disabledBackgroundColor:
+                    AppTheme.secondary.withValues(alpha: 0.4),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14)),
                 elevation: 0,
@@ -387,8 +387,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             children: [
               Text(
                 "Don't have an account? ",
-                style: GoogleFonts.dmSans(
-                    color: AppTheme.textHint, fontSize: 13),
+                style:
+                    GoogleFonts.dmSans(color: AppTheme.textHint, fontSize: 13),
               ),
               GestureDetector(
                 onTap: () => context.go(AppRoutes.register),
@@ -439,8 +439,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             hintText: hint,
             hintStyle:
                 GoogleFonts.dmSans(color: AppTheme.textHint, fontSize: 15),
-            prefixIcon:
-                Icon(icon, color: AppTheme.textHint, size: 20),
+            prefixIcon: Icon(icon, color: AppTheme.textHint, size: 20),
             suffixIcon: suffixIcon,
             filled: true,
             fillColor: AppTheme.cardColor,
@@ -496,8 +495,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               style: const TextStyle(color: AppTheme.textPrimary),
               decoration: InputDecoration(
                 hintText: 'your@email.com',
-                hintStyle:
-                    const TextStyle(color: AppTheme.textHint),
+                hintStyle: const TextStyle(color: AppTheme.textHint),
                 filled: true,
                 fillColor: AppTheme.cardColor,
                 border: OutlineInputBorder(

@@ -29,35 +29,54 @@ class _WebShellState extends ConsumerState<WebShell> {
 
   // All possible nav items
   static const List<_NavItem> _adminItems = [
-    _NavItem(Icons.dashboard_outlined, Icons.dashboard, 'Dashboard', AppRoutes.dashboard),
-    _NavItem(Icons.calendar_today_outlined, Icons.calendar_today, 'Appointments', AppRoutes.webAppointments),
+    _NavItem(Icons.dashboard_outlined, Icons.dashboard, 'Dashboard',
+        AppRoutes.dashboard),
+    _NavItem(Icons.calendar_today_outlined, Icons.calendar_today,
+        'Appointments', AppRoutes.webAppointments),
     _NavItem(Icons.queue_outlined, Icons.queue, 'Queue', AppRoutes.webQueue),
-    _NavItem(Icons.people_outline, Icons.people, 'Customers', AppRoutes.customers),
-    _NavItem(Icons.content_cut, Icons.content_cut, 'Barbers', AppRoutes.barbers),
+    _NavItem(
+        Icons.people_outline, Icons.people, 'Customers', AppRoutes.customers),
+    _NavItem(
+        Icons.content_cut, Icons.content_cut, 'Barbers', AppRoutes.barbers),
     _NavItem(Icons.spa_outlined, Icons.spa, 'Services', AppRoutes.services),
-    _NavItem(Icons.calendar_month_outlined, Icons.calendar_month, 'Schedules', AppRoutes.schedules),
-    _NavItem(Icons.bar_chart_outlined, Icons.bar_chart, 'Reports', AppRoutes.reports),
-    _NavItem(Icons.manage_accounts_outlined, Icons.manage_accounts, 'Users', AppRoutes.usersManagement),
-    _NavItem(Icons.settings_outlined, Icons.settings, 'Settings', AppRoutes.settings),
+    _NavItem(Icons.calendar_month_outlined, Icons.calendar_month, 'Schedules',
+        AppRoutes.schedules),
+    _NavItem(Icons.bar_chart_outlined, Icons.bar_chart, 'Reports',
+        AppRoutes.reports),
+    _NavItem(Icons.manage_accounts_outlined, Icons.manage_accounts, 'Users',
+        AppRoutes.usersManagement),
+    _NavItem(Icons.settings_outlined, Icons.settings, 'Settings',
+        AppRoutes.settings),
   ];
 
   static const List<_NavItem> _receptionistItems = [
-    _NavItem(Icons.dashboard_outlined, Icons.dashboard, 'Dashboard', AppRoutes.receptionistHome),
-    _NavItem(Icons.calendar_today_outlined, Icons.calendar_today, 'Appointments', AppRoutes.webAppointments),
+    _NavItem(Icons.dashboard_outlined, Icons.dashboard, 'Dashboard',
+        AppRoutes.receptionistHome),
+    _NavItem(Icons.calendar_today_outlined, Icons.calendar_today,
+        'Appointments', AppRoutes.webAppointments),
     _NavItem(Icons.queue_outlined, Icons.queue, 'Queue', AppRoutes.webQueue),
-    _NavItem(Icons.people_outline, Icons.people, 'Customers', AppRoutes.customers),
-    _NavItem(Icons.content_cut, Icons.content_cut, 'Barbers', AppRoutes.barbers),
+    _NavItem(
+        Icons.people_outline, Icons.people, 'Customers', AppRoutes.customers),
+    _NavItem(
+        Icons.content_cut, Icons.content_cut, 'Barbers', AppRoutes.barbers),
     _NavItem(Icons.spa_outlined, Icons.spa, 'Services', AppRoutes.services),
-    _NavItem(Icons.calendar_month_outlined, Icons.calendar_month, 'Schedules', AppRoutes.schedules),
-    _NavItem(Icons.settings_outlined, Icons.settings, 'Settings', AppRoutes.settings),
+    _NavItem(Icons.calendar_month_outlined, Icons.calendar_month, 'Schedules',
+        AppRoutes.schedules),
+    _NavItem(Icons.settings_outlined, Icons.settings, 'Settings',
+        AppRoutes.settings),
   ];
 
   static const List<_NavItem> _barberItems = [
-    _NavItem(Icons.dashboard_outlined, Icons.dashboard, 'Dashboard', AppRoutes.barberDashboard),
-    _NavItem(Icons.calendar_today_outlined, Icons.calendar_today, 'Appointments', AppRoutes.barberAppointments),
-    _NavItem(Icons.queue_outlined, Icons.queue, 'My Queue', AppRoutes.barberQueue),
-    _NavItem(Icons.calendar_month_outlined, Icons.calendar_month, 'My Schedule', AppRoutes.barberSchedule),
-    _NavItem(Icons.person_outline, Icons.person, 'Profile', AppRoutes.barberProfile),
+    _NavItem(Icons.dashboard_outlined, Icons.dashboard, 'Dashboard',
+        AppRoutes.barberDashboard),
+    _NavItem(Icons.calendar_today_outlined, Icons.calendar_today,
+        'Appointments', AppRoutes.barberAppointments),
+    _NavItem(
+        Icons.queue_outlined, Icons.queue, 'My Queue', AppRoutes.barberQueue),
+    _NavItem(Icons.calendar_month_outlined, Icons.calendar_month, 'My Schedule',
+        AppRoutes.barberSchedule),
+    _NavItem(
+        Icons.person_outline, Icons.person, 'Profile', AppRoutes.barberProfile),
   ];
 
   List<_NavItem> _navItemsForRole(String role) {
@@ -129,7 +148,9 @@ class _WebShellState extends ConsumerState<WebShell> {
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
             return GoogleFonts.dmSans(
-                color: AppTheme.secondary, fontSize: 11, fontWeight: FontWeight.w600);
+                color: AppTheme.secondary,
+                fontSize: 11,
+                fontWeight: FontWeight.w600);
           }
           return GoogleFonts.dmSans(color: AppTheme.textHint, fontSize: 11);
         }),
@@ -176,28 +197,41 @@ class _WebShellState extends ConsumerState<WebShell> {
     switch (role.trim().toLowerCase()) {
       case AppConstants.roleAdmin:
         return const [
-          _NavItem(Icons.dashboard_outlined, Icons.dashboard, 'Dashboard', AppRoutes.dashboard),
-          _NavItem(Icons.calendar_today_outlined, Icons.calendar_today, 'Appts', AppRoutes.webAppointments),
-          _NavItem(Icons.queue_outlined, Icons.queue, 'Queue', AppRoutes.webQueue),
-          _NavItem(Icons.people_outline, Icons.people, 'Customers', AppRoutes.customers),
+          _NavItem(Icons.dashboard_outlined, Icons.dashboard, 'Dashboard',
+              AppRoutes.dashboard),
+          _NavItem(Icons.calendar_today_outlined, Icons.calendar_today, 'Appts',
+              AppRoutes.webAppointments),
+          _NavItem(
+              Icons.queue_outlined, Icons.queue, 'Queue', AppRoutes.webQueue),
+          _NavItem(Icons.people_outline, Icons.people, 'Customers',
+              AppRoutes.customers),
           _NavItem(Icons.menu, Icons.menu, 'More', '__drawer__'),
         ];
       case AppConstants.roleReceptionist:
         return const [
-          _NavItem(Icons.dashboard_outlined, Icons.dashboard, 'Dashboard', AppRoutes.receptionistHome),
-          _NavItem(Icons.calendar_today_outlined, Icons.calendar_today, 'Appts', AppRoutes.webAppointments),
-          _NavItem(Icons.queue_outlined, Icons.queue, 'Queue', AppRoutes.webQueue),
-          _NavItem(Icons.people_outline, Icons.people, 'Customers', AppRoutes.customers),
+          _NavItem(Icons.dashboard_outlined, Icons.dashboard, 'Dashboard',
+              AppRoutes.receptionistHome),
+          _NavItem(Icons.calendar_today_outlined, Icons.calendar_today, 'Appts',
+              AppRoutes.webAppointments),
+          _NavItem(
+              Icons.queue_outlined, Icons.queue, 'Queue', AppRoutes.webQueue),
+          _NavItem(Icons.people_outline, Icons.people, 'Customers',
+              AppRoutes.customers),
           _NavItem(Icons.menu, Icons.menu, 'More', '__drawer__'),
         ];
       case AppConstants.roleBarber:
       default:
         return const [
-          _NavItem(Icons.dashboard_outlined, Icons.dashboard, 'Dashboard', AppRoutes.barberDashboard),
-          _NavItem(Icons.calendar_today_outlined, Icons.calendar_today, 'Appts', AppRoutes.barberAppointments),
-          _NavItem(Icons.queue_outlined, Icons.queue, 'Queue', AppRoutes.barberQueue),
-          _NavItem(Icons.calendar_month_outlined, Icons.calendar_month, 'Schedule', AppRoutes.barberSchedule),
-          _NavItem(Icons.person_outline, Icons.person, 'Profile', AppRoutes.barberProfile),
+          _NavItem(Icons.dashboard_outlined, Icons.dashboard, 'Dashboard',
+              AppRoutes.barberDashboard),
+          _NavItem(Icons.calendar_today_outlined, Icons.calendar_today, 'Appts',
+              AppRoutes.barberAppointments),
+          _NavItem(Icons.queue_outlined, Icons.queue, 'Queue',
+              AppRoutes.barberQueue),
+          _NavItem(Icons.calendar_month_outlined, Icons.calendar_month,
+              'Schedule', AppRoutes.barberSchedule),
+          _NavItem(Icons.person_outline, Icons.person, 'Profile',
+              AppRoutes.barberProfile),
         ];
     }
   }
@@ -225,15 +259,17 @@ class _WebShellState extends ConsumerState<WebShell> {
                   decoration: BoxDecoration(
                     color: AppTheme.secondary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: AppTheme.secondary.withValues(alpha: 0.3)),
+                    border: Border.all(
+                        color: AppTheme.secondary.withValues(alpha: 0.3)),
                   ),
-                  child: const Icon(Icons.content_cut, color: AppTheme.secondary, size: 18),
+                  child: const Icon(Icons.content_cut,
+                      color: AppTheme.secondary, size: 18),
                 ),
                 if (_sidebarExpanded) ...[
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Marbin',
+                      'kyl Barbershop',
                       style: GoogleFonts.playfairDisplay(
                         color: AppTheme.textPrimary,
                         fontSize: 18,
@@ -248,7 +284,8 @@ class _WebShellState extends ConsumerState<WebShell> {
                     color: AppTheme.textHint,
                     size: 20,
                   ),
-                  onPressed: () => setState(() => _sidebarExpanded = !_sidebarExpanded),
+                  onPressed: () =>
+                      setState(() => _sidebarExpanded = !_sidebarExpanded),
                 ),
               ],
             ),
@@ -293,7 +330,9 @@ class _WebShellState extends ConsumerState<WebShell> {
         duration: const Duration(milliseconds: 150),
         margin: const EdgeInsets.symmetric(vertical: 2),
         decoration: BoxDecoration(
-          color: isActive ? AppTheme.secondary.withValues(alpha: 0.1) : Colors.transparent,
+          color: isActive
+              ? AppTheme.secondary.withValues(alpha: 0.1)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
           border: isActive
               ? Border.all(color: AppTheme.secondary.withValues(alpha: 0.2))
@@ -315,7 +354,8 @@ class _WebShellState extends ConsumerState<WebShell> {
               ? Text(
                   item.label,
                   style: GoogleFonts.dmSans(
-                    color: isActive ? AppTheme.secondary : AppTheme.textSecondary,
+                    color:
+                        isActive ? AppTheme.secondary : AppTheme.textSecondary,
                     fontSize: 13,
                     fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
                   ),
@@ -363,7 +403,8 @@ class _WebShellState extends ConsumerState<WebShell> {
                     )),
               ),
               IconButton(
-                icon: const Icon(Icons.logout, color: AppTheme.textHint, size: 18),
+                icon: const Icon(Icons.logout,
+                    color: AppTheme.textHint, size: 18),
                 onPressed: () async {
                   await ref.read(authNotifierProvider.notifier).signOut();
                 },
@@ -389,10 +430,14 @@ class _WebShellState extends ConsumerState<WebShell> {
 
   Color _roleColor(String role) {
     switch (role.toLowerCase()) {
-      case AppConstants.roleAdmin: return AppTheme.secondary;
-      case AppConstants.roleReceptionist: return AppTheme.info;
-      case AppConstants.roleBarber: return Colors.purple;
-      default: return AppTheme.success;
+      case AppConstants.roleAdmin:
+        return AppTheme.secondary;
+      case AppConstants.roleReceptionist:
+        return AppTheme.info;
+      case AppConstants.roleBarber:
+        return Colors.purple;
+      default:
+        return AppTheme.success;
     }
   }
 }
