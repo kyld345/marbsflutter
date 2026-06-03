@@ -2,6 +2,11 @@
 
 A new Flutter project.
 
+## Web routing
+
+This project uses path URL strategy on web, so direct links like `/login` or `/dashboard` work without a `#` in the URL.
+If you deploy to Apache/XAMPP, make sure the server serves `index.html` for unknown routes. The included `web/.htaccess` handles that for Apache.
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.

@@ -1,5 +1,11 @@
 {
   "buildCommand": "git clone https://github.com/flutter/flutter.git --depth 1 -b stable $HOME/flutter && export PATH=\"$PATH:$HOME/flutter/bin\" && flutter config --enable-web && flutter build web --release",
   "outputDirectory": "build/web",
-  "installCommand": "echo 'No npm install needed'"
+  "installCommand": "echo 'No npm install needed'",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
